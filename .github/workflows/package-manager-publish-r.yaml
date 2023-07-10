@@ -4,17 +4,16 @@ on:
     branches: [main]
 
 jobs:
-  package-manager-publish-r:
-    name: package-manager-publish-r
-    # https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners#supported-runners-and-hardware-resources
-    runs-on: ubuntu-22.04
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        R: [ '3.5.3', '3.6.1' ]
+    name: R ${{ matrix.R }} sample
     steps:
       - uses: actions/checkout@v3
-      - name: Build and Publish to Package Manager
-        uses: rstudio/actions/package-manager-publish-r@main
+      - name: Setup R
+        uses: r-lib/actions/setup-r@v2
         with:
-          url: http://packagemanager.example.com:4242
-          api-token: ${{ secrets.PPM_API_TOKEN }}
-          r-version: release
-          distro: jammy
-          source: local
+          r-version: ${{ matrix.R }}
+      - run: Rscript -e 'print("hello")'
